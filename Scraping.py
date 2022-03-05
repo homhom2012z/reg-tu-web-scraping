@@ -25,7 +25,7 @@ faculties = ['คณะแพทยศาสตร์', 'คณะทันต�
 semester = [1, 2]
 
 # %%
-# DO SUM TING WHO CARES
+# SCRAPING BODY
 datas = []
 
 PATH = "C:\Program Files (x86)\chromedriver.exe"
@@ -41,7 +41,6 @@ for selectedFaculty in faculties:
         Select(driver.find_elements_by_tag_name('select')[4]).select_by_visible_text('ทั้งหมด')
         driver.find_element_by_xpath('/html/body/table/tbody/tr[1]/td[2]/table/tbody/tr[7]/td[2]/table/tbody/tr/td/font[3]/input').click()
 
-        pageCount = 0
 
         data = pd.DataFrame(
             {
@@ -55,11 +54,11 @@ for selectedFaculty in faculties:
                 'instructorName': [],
                 'credit': [],
                 'section': [],
-                # 'classDate': [],
-                # 'classRoom': [],
-                # 'total': [],
-                # 'remaining': [],
-                # 'status': [],
+                'classDate': [],
+                'classRoom': [],
+                'total': [],
+                'remaining': [],
+                'status': [],
             }
         )
 
@@ -129,10 +128,10 @@ for selectedFaculty in faculties:
                     subjectDetails.append('N/A')
                     classRoom = 'N/AX'
                 
-                # subjectDetails.append(classRoom)
-                # subjectDetails.append(tdColumns[10].text.split()[0])                
-                # subjectDetails.append(tdColumns[11].text.split()[0])
-                # subjectDetails.append(tdColumns[12].text.split()[0])
+                subjectDetails.append(classRoom)
+                subjectDetails.append(tdColumns[10].text.split()[0])                
+                subjectDetails.append(tdColumns[11].text.split()[0])
+                subjectDetails.append(tdColumns[12].text.split()[0])
                                
                 data = data.append({
                     'campas': subjectDetails[0],
@@ -146,43 +145,35 @@ for selectedFaculty in faculties:
                     'credit': subjectDetails[7],
                     'section': subjectDetails[8],
                     'classDate': subjectDetails[9],
-                    # 'classRoom': subjectDetails[10],
-                    # 'total': subjectDetails[11],
-                    # 'remaining': subjectDetails[12],
-                    # 'status': subjectDetails[13]
+                    'classRoom': subjectDetails[10],
+                    'total': subjectDetails[11],
+                    'remaining': subjectDetails[12],
+                    'status': subjectDetails[13]
 
 
                 }, ignore_index=True)
 
             time.sleep(0.4)
-            pageCount +=1
             clickNext = driver.find_elements_by_xpath("//td[2]/font/a")
             if len(clickNext) >1:
                 
                 clickNext[1].click()
                 continue
             if clickNext[0].text == '[หน้าก่อน]':
-                # data.to_excel('data.xlsx', engine='xlsxwriter')
-                # sheetName = selectedFaculty + '_' + str(selectedSemester)
                 sheetName = selectedFaculty
-                # writer = pd.ExcelWriter('data.xlsx')
                 datas.append([data, sheetName])
-                # data.to_excel(writer, sheet_name=sheetName)
                 driver.find_element_by_xpath('//a[contains(text(), "ถอยกลับ")]').click()
                 time.sleep(1)
                 break;
 
             clickNext[0].click()
 
-        # print(pageCount)
 
-# dataMerge = []
-
-# for data in datas[::2]:
-#     dataMerge.append(pd.concat([data[0], (datas[datas.index(data)+1])[0]]))
 
 writer = pd.ExcelWriter('data1.xlsx', engine='openpyxl')
 pd.DataFrame().to_excel(writer)
+
+# Save to xlsx format file as seperate sheets
 
 # for datax in datas[:-1:2]:
 
@@ -197,6 +188,8 @@ pd.DataFrame().to_excel(writer)
 #     datax[0].to_excel(writer, sheet_name=datax[1])
 
 # %%
+# Save to xlsx format file as merged sheet
+
 dataSemester_1 = pd.DataFrame()
 dataSemester_2 = pd.DataFrame()
 
@@ -214,5 +207,3 @@ writer.save()
 print('Finished')
 
 driver.quit()
-
-# %%
