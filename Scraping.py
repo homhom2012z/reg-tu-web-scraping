@@ -173,7 +173,7 @@ for selectedFaculty in faculties:
 writer = pd.ExcelWriter('data1.xlsx', engine='openpyxl')
 pd.DataFrame().to_excel(writer)
 
-# Save to xlsx format file as seperate sheets
+# Save to xlsx format file as separate sheets
 
 # for datax in datas[:-1:2]:
 
